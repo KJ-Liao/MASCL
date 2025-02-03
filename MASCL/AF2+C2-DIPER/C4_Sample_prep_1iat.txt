@@ -1,0 +1,3 @@
+#!/bin/bash
+
+../protein_prep/prepare.py 1iat.000.1.pdb

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+../protein_prep/prepare.py 5cg5.000.3.pdb

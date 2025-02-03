@@ -1,0 +1,3 @@
+#!/bin/bash
+
+../piper -vv -c1.0 -k4 --msur_k=1.0 --maskr=1.0 -T FFTW_EXHAUSTIVE -R 3395 -t 1 -p ../prms/atoms.prm -f ../prms/Coeff_DIPER.prm -r ../prms/C4_rots.prm 5cg5.000.3_pnon.pdb 5cg5.000.3_pnon.pdb --o ./C4.DIPER_Result/5cg5.000.3/
