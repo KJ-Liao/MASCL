@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./protein_prep/prepare.py /home/juju/Desktop/New Folder/AF3/AF3_trun_Dimer/5cg5/5cg5_trun_AF_model_0.pdb

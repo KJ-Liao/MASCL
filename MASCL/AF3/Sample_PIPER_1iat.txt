@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./piper -vv -c1.0 -k4 --msur_k=1.0 --maskr=1.0 -T FFTW_EXHAUSTIVE -R 3395 -t 1 -p ./prms/atoms.prm -f ./prms/Coeff_DIPER.prm -r ./prms/C4_rots.prm ./AF_Dimer4Docking/1iat_trun_AF_model_0_pnon.pdb ./AF_Dimer4Docking/1iat_trun_AF_model_0_pnon.pdb --o ./AF_Dimer4Docking/1iat_trun_AF_model_0
