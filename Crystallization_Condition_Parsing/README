@@ -1,1 +1,23 @@
+# Condition Parsing
 
+The script "Xtal_Cond_Parser.m" is used to parse crystallization conditions from PDB files, which is publicly available in our GitHub repository: "https://github.com/KJ-Liao/MASCL/tree/main/Crystallization_Condition_Parsing."
+
+1. Overview of the Parsing Method
+
+Crystallization details recorded in PDB REMARK280 typically include reagent concentrations and names, pH, temperature, and crystallization method (e.g., sitting or hanging drop). These pieces of information have no fixed order and are often separated by spaces, commas, semicolons, or various units. Additionally, different research groups may use diverse names, abbreviations, or even misspellings for the same reagent. Figure S7B in our manuscript illustrates our parsing workflow:
+
+(1) REMARK280 records are first divided into fragments using common delimiters, such as spaces, commas, semicolons, and units.
+(2) We compiled a list of frequently used reagents and their aliases in a reference table (listed in "Common_Reagents&_Aliases.csv"). Each alias serves as a probe to identify the reagent in the REMARK280 record and map it to a standardized name.
+(3) Once a reagent is recognized, the parser searches the preceding text for concentration units (e.g., %, M, mM, mg/mL) and retrieves the numeric value to determine the reagent’s concentration. This yields a complete “reagent factor” that combines a concentration, unit, and standardized chemical name.
+(4) Similar strategies are applied to extract pH values and temperature information by detecting strings such as “pH” and temperature units (e.g., °C, °F, K).
+(5) The parser also captures the crystallization methods (e.g., sitting drop, hanging drop) by scanning for keywords such as “vapor,” “diffusion,” “lipidic cubic phase,” “sit,” “hang,” and “batch.”
+(6) After each recognized string is extracted, it is removed from the original REMARK280 entry. If all relevant fields are eventually identified (leaving no unrecognized text), the parsing is deemed successful. Otherwise, any leftover text suggests unrecognized reagents, misspellings, or non-standard formatting, and those entries are classified as failed.
+(7) Parsed crystallization conditions are then classified based on the level of detail (see Figure S7C in the manuscript): Qualified (including complete reagent factors and other crystallization details), w/o Conc. (lacking concentration information), pH & Temp only (containing only pH and temperature information) and Null (no relevant data).
+
+After parsing, each condition is converted into a 245-element vector that encompasses crystallization methods, pH, temperature (in Kelvin), and the concentrations of 241 common reagents (in micromolar or percentage units).
+
+2. Parsing Results
+
+In this study, 16,123 single-chain human proteins (SCHP) (see Dataset section) were parsed using "Xtal_Cond_Parser.m". The raw extraction is stored in "Parsing_Result.csv", where each column corresponds to a different sample (in the same order as target.txt) and each row corresponds to entries in "Reagent_Dictionary.csv", representing the 241 reagents (listed in "Common_Reagents&_Aliases.csv") plus extraction status fields used to determine success or failure.
+
+After data cleaning, 9,120 samples were successfully parsed. These results are provided in "Qualified_Sample_XCP_Result.xlsx", where each row represents one sample and each column corresponds to the extracted state or crystallization condition. Users can filter the dataset based on their own criteria. Detailed PDB entries and relevant structural information for these 9,120 qualified PDB entries are provided in "SCHP_Xtal_Condition_Phaser_Result.xlsx" for further reference and analysis.
