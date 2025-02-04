@@ -1,1 +1,12 @@
+Dataset
 
+This project utilizes three main datasets of single-chain human proteins (SCHP). Detailed PDB entries and relevant structural information for the 16,123 SCHP, 3,781 non-redundant SCHP, and 2,518 similarity-reduced 2-fold proteins are provided in the file "Single_Chain_Human_Proteins_(SCHP)_Dataset.xlsx", located in the "Dataset" folder. Additional information about the rationale and experimental use of these datasets can be found in Sections 2.1 and 5.1 of the manuscript.
+
+(1) Single-Chain Human Protein (SCHP) Dataset
+For the space group analysis, 16,190 PDB files of single-chain human proteins (determined by X-ray crystallography) were downloaded from the Protein Data Bank prior to May 27, 2022. After removing human-associated but non-human proteins (e.g., viral proteins), 16,123 single-chain human proteins remained, collectively referred to as the "single-chain human protein dataset."
+
+(2) Non-Redundant SCHP Dataset
+To reduce homology redundancy, the SCHP dataset was clustered based on sequence identity. Any group of proteins sharing ≥70% sequence identity was consolidated into a single representative. Specifically, for each cluster, the structure with the highest resolution was chosen, resulting in a non-redundant set of 3,781 proteins, referred to as the "non-redundant SCHP dataset."
+
+(3) Similarity-Reduced 2-Fold Proteins
+From the non-redundant SCHP dataset, 2,518 proteins included crystallographic dimeric assemblies with 2-fold rotational symmetry after crystal packing construction. This subset of proteins are referred to as the "similarity-reduced 2-fold proteins."
