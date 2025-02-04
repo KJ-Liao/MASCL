@@ -1,1 +1,72 @@
+# AAI-PatchBag Development and Workflow
 
+This section describes how to develop and use AAI-PatchBag, including the required dataset and sample code. The overall process is divided into two major parts:
+(1) Building the PatchBag Library
+(2) Batch Processing of Input Samples
+
+1. Building the PatchBag Library
+For an overview of the AAI-PatchBag logic and workflow, please refer to Section 2.5 of the manuscript.
+
+(0) Install and Set Up EDTSurf
+- Download the EDTSurf program from: https://zhanggroup.org/EDTSurf/. EDTSurf will be used to generate protein surface representations (e.g., .ply surface files).
+- Place your ground truth PDB files in a folder named PDB.
+- Run EDTSurf to convert each PDB sample into a corresponding .ply file, storing the results in Surf/[target_entry].
+
+(1) Dataset for the Patch Library
+For our example, we used 3,737 non-redundant SCHP (excluding those with fewer than 20 residues) to build the PatchBag library. These PDB entries are listed in Qualified_Reduced_Sample_3737.txt. The user may use a different set of PDB samples depending on your needs. As a demonstration, we illustrate the workflow with 1grt.pdb.
+
+(2) Extracting Interface Residues
+- Run "PDB2Protein_Int_Res_Batch.m" and "PDB2Solvent_Int_Res_Batch.m" to identify residues on protein–protein interaction interface (PPI) and protein–solvent exposure interface (PSI).
+
+- These scripts extract the Cα coordinates of residues at each interface and store them in [pdb_entry].txt files:
+* PPI files go to "Reduced_Sample_Int_Res_Results".
+* PSI files go to "Reduced_Sample_nInt_Res_Results".
+
+- Each *.txt file contains:
+* X, Y, Z coordinates of each Cα atom
+* A 4th column indicating the residue type (an integer from 1 to 20, corresponding to {'GLY','ALA','VAL','ILE','LEU','SER','THR','ASP','ASN','GLU','GLN','LYS','ARG','CYS','MET','PHE','TYR','TRP','HIS','PRO'})
+
+- Example (1grt)
+* 1grt.txt (PPI) in "Reduced_Sample_Int_Res_Results"
+* 1grt.txt (PSI) in "Reduced_Sample_nInt_Res_Results".
+
+(3) Patch Extraction
+- Run "Patch_Extraction_Patch_PPI.m" and "Patch_Extraction_Patch_PSI.m" to parse each "[pdb_entry].txt" file and segment the PPI/PSI surface into smaller patches (as defined in the manuscript).
+
+- The resulting patch data are saved in
+* Patch_Results_6plus1 (PPI patches)
+* Patch_Results_nInt (PSI patches)
+
+- Each file is named "[pdb_entry]_Patch.txt", containing all patches for that sample. Each row represents one patch, and each column stores the Cα coordinates plus residue type.
+- Example (1grt)
+* 1grt_Patch.txt (PPI) in "Reduced_Sample_Int_Res_Results"
+* 1grt_Patch.txt (PSI) in "Reduced_Sample_nInt_Res_Results".
+
+(4) Creating the Patch Library
+- After patch extraction, run a merge script, "Patch_Merge.m", to combine patches from different samples into one large patch pool.
+
+- Run "Patch_Library.m" to randomly sample patches (e.g., 8,000 patches) and perform clustering. This yields 300 medoid basis patches, forming the PatchBag library for subsequent analyses. The final basis medoids are saved in Clust_medoids_300.mat. The user can adjust Count (number of patches to sample) and Max_Cluster_No (number of clusters) to customize own library as needed. 
+
+- Example (Manuscript, Section 2.6)
+We built 300 medoid libraries for both PPI and PSI. The files "Clust_medoids_300_PPI.mat" and "Clust_medoids_300_PSI.mat" are in the "Package" folder.
+
+** Note
+If you run all scripts in the same folder, simply execute them in sequence to perform surface extraction, patch segmentation, library construction, medoid basis generation, and final AAI-PatchBag representations. Otherwise, ensure each generated file (.pdb, .txt, .mat) is placed in the correct input paths used by each script
+
+2. Batch Processing of Input Samples
+
+In our studies, each protein was converted from a PDB file into multiple matrices representing patch usage and various physicochemical properties (see manuscript Section 2.5 for more details).
+
+(0) PatchBag Library
+Obtain the PatchBag libraries from the "Package" folder: "Clust_medoids_300_PPI.mat" (for PPI) and "Clust_medoids_300_PSI.mat" (for PSI).
+
+(1) AAI_PatchBag Computation
+- Run "AAI_PatchBag.m" to generate "AAI_PatchBag.mat", which contains two portions: PPI rand PSI.
+
+- In each PPI portion:
+* The first field is the PDB entry.
+* The second field is the 1D PatchBag vector (no physicochemical features).
+* Fields 3 to 71 (Patch_code_1, Patch_code_2, …, Patch_code_69) expand the PatchBag into 2D AAI-PatchBag matrices using 69 * physicochemical features (see Supplementary Table S10 in the manuscript).
+* Each of these 69 feature expansions produces a 300×5 matrix (i.e., 300 representative patch shapes × 5 intensity levels).
+
+- The number of clusters and physicochemical features you choose affect the final vector length and number of fields. You can then combine the resulting matrices with other conventional protein similarity features (with user-defined weights) to perform more comprehensive protein similarity comparisons. For instance, in section 2.6 of our manuscript, we aimed to identify potential crystallization conditions from a condition pool, optimizing the AUC.
