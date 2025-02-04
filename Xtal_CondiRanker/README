@@ -1,1 +1,37 @@
+# Xtal_CondiRanker
+
+This script, Xtal_CondiRanker.m, generates various protein features—such as sequence identity, RMSD, 3DZD, molecular weight, patch count, and AAI-PatchBag vectors—to facilitate comprehensive protein similarity comparisons. By assigning weights to these features, you can rank how closely the input target protein resembles proteins in your existing database. The ranked proteins' crystallization conditions can then serve as references for the target protein.
+
+** Usage
+- Open Xtal_CondiRanker.m and replace the [target_entry] with the PDB entry you want to analyze.
+- Run the script to produce two output files:
+
+1. Target_Info_[target_entry].mat
+This file contains general and structural information about the target protein, including:
+(1) Seq: The protein’s amino acid sequence.
+(2) CA_Coord: Alpha-carbon backbone coordinates.
+(3) Jerhoud_InvD: A high-precision 3DZD (3D Zernike Descriptors).
+(4) Kihara_InvD: A coarse 3DZD representation.
+(5) MW_Patch_Num: Molecular weight and total patch count
+(6) Res_Matrix: A 20×20 matrix (rows and columns correspond to the 20 standard amino acids, in the order
+{'GLY';'ALA';'VAL';'ILE';'LEU';'SER';'THR';'ASP';'ASN';'GLU';'GLN';'LYS';'ARG';'CYS';'MET';'PHE';'TYR';'TRP';'HIS';'PRO'}.
+If a specific residue type on the target protein surface (e.g., GLY) interacts with a neighboring molecule’s residue type (e.g., ALA) X times, then the corresponding matrix element (in this example, (1,2)) is assigned X. Thus, the full matrix reflects residue–residue interactions between the center target protein and surrounding molecules.
+
+2. AAI_PatchBag_[target_entry].mat
+This file stores the AAI-PatchBag ranking results. It compares the target protein with the proteins in your existing PatchBag-based database, providing a sorted list of similar proteins and their associated crystallization conditions for reference.
+
+- Example (4qeq)
+The file is named "AAI_PatchBag_4qeq.mat", from which we derive the Top 20 ranked proteins (as discussed in manuscript Section 2.7).
+
+** Prerequisites
+This script relies on several external tools and scripts for surface calculation and 3DZD computation. Please ensure the following are installed and properly referenced in your Xtal_CondiRanker.m (e.g., by placing their executables or scripts in the same directory or updating the paths accordingly):
+
+EDTSurf : rapid macromolecular surface calculation.
+available in: https://zhanggroup.org/EDTSurf/
+generate_3dzd.py : molecular shape in ply format and 3DZD computation.
+available in: https://github.com/kiharalab/3d-af_surfer
+MakeShape, Shape2Zernike : 3DZD computation.
+available in: https://github.com/jerhoud/zernike3d/tree/main
+
+Verify that these tools’ binaries (and any supporting scripts) are in the correct directory or defined in your system’s PATH.
 
